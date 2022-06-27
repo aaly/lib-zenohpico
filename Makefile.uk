@@ -1,0 +1,131 @@
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# zenohpico Unikraft library
+#
+# Authors: Eclipse Foundation <https://www.eclipse.org/>
+#
+# Copyright (c) 2022, Eclipse Foundation <https://www.eclipse.org/>. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the copyright holder nor the names of its
+#    contributors may be used to endorse or promote products derived from
+#    this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+################################################################################
+# Library registration
+################################################################################
+$(eval $(call addlib_s,libzenohpico,$(CONFIG_LIBZENOHPICO)))
+
+################################################################################
+# Sources
+################################################################################]
+LIBZENOHPICO_VERSION = 0.5.0-beta.9
+LIBZENOHPICO_URL = https://github.com/eclipse-zenoh/zenoh-pico/archive/$(LIBZENOHPICO_VERSION).zip
+LIBZENOHPICO_SUBDIR = zenoh-pico-$(LIBZENOHPICO_VERSION)
+LIBZENOHPICO_PATCHDIR = $(LIBZENOHPICO_BASE)/patches
+$(eval $(call patch,libzenohpico,$(LIBZENOHPICO_PATCHDIR),$(LIBZENOHPICO_SUBDIR)))
+$(eval $(call fetch,libzenohpico,$(LIBZENOHPICO_URL)))
+
+################################################################################
+# Helpers
+################################################################################
+LIBZENOHPICO_SRC = $(LIBZENOHPICO_ORIGIN)/$(LIBZENOHPICO_SUBDIR)
+
+################################################################################
+# Library includes for applications using this lib ;)
+################################################################################
+CINCLUDES-y += -I$(LIBZENOHPICO_BASE)/include
+
+################################################################################
+# Flags For Applications using this lib
+################################################################################
+LIBZENOHPICO_FLAGS = -DZENOH_LINUX
+
+# Suppress some warnings to make the build process look neater
+LIBZENOHPICO_FLAGS_SUPPRESS =
+
+
+LIBZENOHPICO_CFLAGS-y += -DZENOH_LINUX
+LIBZENOHPICO_CFLAGS-y += $(LIBZENOHPICO_FLAGS)
+LIBZENOHPICO_CFLAGS-y += $(LIBZENOHPICO_FLAGS_SUPPRESS)
+
+################################################################################
+# Glue code
+################################################################################
+# Include paths
+# LIBZENOHPICO_CINCLUDES-y   += $(LIBZENOHPICO_COMMON_INCLUDES-y)
+# LIBZENOHPICO_CXXINCLUDES-y += $(LIBZENOHPICO_COMMON_INCLUDES-y)
+#LIBZENOHPICOSRCS-$(CONFIG_LIBZENOHPICO_MAIN_FUNCTION) += $(LIBZENOHPICO_BASE)/main.c|unikraft
+
+################################################################################
+# Library sources
+################################################################################
+# LIBZENOHPICO_SRCS-y += # Include source files here
+#LIBZENOHPICO_CINCLUDES-y += -I$(LIBZENOHPICO_BASE)/include
+
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/session/rx.c $(LIBZENOHPICO_SRC)/src/zenoh/session/session_rx.c)
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/session/tx.c $(LIBZENOHPICO_SRC)/src/zenoh/session/session_tx.c)
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/transport/link/tx.c $(LIBZENOHPICO_SRC)/src/zenoh/transport/link/link_tx.c)
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/protocol/utils.c $(LIBZENOHPICO_SRC)/src/zenoh/protocol/protocol_utils.c)
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/session/utils.c $(LIBZENOHPICO_SRC)/src/zenoh/session/session_utils.c)
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/transport/rx.c $(LIBZENOHPICO_SRC)/src/zenoh/transport/transport_rx.c)
+UK_PREPARE += $(shell cp $(LIBZENOHPICO_SRC)/src/zenoh/transport/link/rx.c $(LIBZENOHPICO_SRC)/src/zenoh/transport/link/link_rx.c)
+
+#LIBHZENOHPICO_VERSION=0.5.0-beta.9
+#LIBZENOHPICO_URL=https://github.com/eclipse-zenoh/zenoh-pico/archive/refs/tags/$(LIBZENOHPICO_VERSION).zip
+#LIBZENOHPICO_EXTRACTED=$(LIBZENOHPICO_ORIGIN)/zenoh-pico-$(LIBHZENOHPICO_VERSION))
+LIBZENOHPICO_SRCS-y += $(LIBZENOHPICO_SRC)/src/collections/mvar.c \
+$(LIBZENOHPICO_SRC)/src/collections/bytes.c \
+$(LIBZENOHPICO_SRC)/src/collections/vec.c \
+$(LIBZENOHPICO_SRC)/src/collections/list.c \
+$(LIBZENOHPICO_SRC)/src/collections/intmap.c \
+$(LIBZENOHPICO_SRC)/src/collections/string.c \
+$(LIBZENOHPICO_SRC)/src/system/common.c \
+$(LIBZENOHPICO_SRC)/src/system/unix/network.c \
+$(LIBZENOHPICO_SRC)/src/system/unix/system.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/link/manager.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/link/tcp.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/link/udp.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/api.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/transport/transport_rx.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/transport/link/link_rx.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/transport/link/task/lease.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/transport/link/task/read.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/transport/link/link_tx.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/scout.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/subscription.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/session_rx.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/resource.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/session_utils.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/query.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/session_tx.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/session/queryable.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/protocol/property.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/protocol/iobuf.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/protocol/codec.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/protocol/rname.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/protocol/msgcodec.c \
+$(LIBZENOHPICO_SRC)/src/zenoh/protocol/protocol_utils.c
+
+LIBZENOHPICO_CINCLUDES-y += -I$(LIBZENOHPICO_SRC)/include
+#LIBZENOHPICO_CFLAGS-y += -DZENOH_LINUX
