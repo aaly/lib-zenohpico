@@ -1,0 +1,21 @@
+---
+specification: '0.5'
+name: libzenohpico
+unikraft:
+  version: 0.9.0
+targets:
+  - architecture: x86_64
+    platform: kvm
+  - architecture: x86_64
+    platform: linuxu
+  - architecture: arm64
+    platform: kvm
+  - architecture: arm64
+    platform: linuxu
+libraries:
+  pthread-embedded:
+    version: 0.0.9
+  newlib:
+    version: '0.9.0'
+  lwip:
+    version: 0.9.0
