@@ -1,7 +1,9 @@
 menuconfig LIBZENOHPICO
 	bool "zenohpico Unikraft library"
 	default n
-
+#	select LIBPTHREAD_EMBEDDED
+#       select LIBLWIP
+#	select LIBNEWLIBC
 if LIBZENOHPICO
 config LIBZENOHPICO_MAIN_FUNCTION
 	bool "Provide main function"
