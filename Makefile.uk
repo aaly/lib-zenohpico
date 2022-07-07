@@ -36,6 +36,8 @@
 ################################################################################
 $(eval $(call addlib_s,libzenohpico,$(CONFIG_LIBZENOHPICO)))
 
+UK_LIBS ?= $(pwd)/../../libs 
+LIBS := $(UK_LIBS)/lib-libnewlibc
 ################################################################################
 # Sources
 ################################################################################]
@@ -127,5 +129,7 @@ $(LIBZENOHPICO_SRC)/src/zenoh/protocol/rname.c \
 $(LIBZENOHPICO_SRC)/src/zenoh/protocol/msgcodec.c \
 $(LIBZENOHPICO_SRC)/src/zenoh/protocol/protocol_utils.c
 
-LIBZENOHPICO_CINCLUDES-y += -I$(LIBZENOHPICO_SRC)/include
+LIBZENOHPICO_CINCLUDES-y += -I$(LIBZENOHPICO_SRC)/include -I$(LIBNEWLIBC_BASE)/include
+LIBZENOHPICO_COMMON_INCLUDES-y     += -I$(LIBNEWLIBC_BASE)/include
+
 #LIBZENOHPICO_CFLAGS-y += -DZENOH_LINUX
